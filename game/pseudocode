@@ -1,0 +1,6 @@
+Creating the enemy:
+
+create self.enemy
+add enemy to sprite group
+draw enemy
+tell enemy to move left and right on screeñ
