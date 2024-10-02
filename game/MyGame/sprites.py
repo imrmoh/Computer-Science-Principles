@@ -1,5 +1,4 @@
 #File by Imraan Mohammed
-from networkx import margulis_gabber_galil_graph
 from settings import *
 import pygame as p
 from pygame.sprite import Sprite
