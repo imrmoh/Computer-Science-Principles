@@ -1,4 +1,10 @@
 #File by Imraan Mohammed
+from email.message import _SupportsDecodeToPayload
+from faulthandler import cancel_dump_traceback_later
+from time import sleep
+from tkinter.colorchooser import askcolor
+
+from networkx import single_target_shortest_path
 from settings import *
 import pygame as p
 from pygame.sprite import Sprite
@@ -17,8 +23,8 @@ class Player(Sprite):
         self.speed=10
         #self.rect.x=x
         #self.rect.y=y
-        self.x=x*+TILESIZE
-        self.y=y*+TILESIZE
+        self.x=x*TILESIZE
+        self.y=y*TILESIZE
         self.speed=10
         self.vx, self.vy = 0, 0 
 
@@ -88,3 +94,5 @@ class RightWall(Sprite):
         self.image.fill(WHITE)
         self.x=x
         self.y=y
+
+

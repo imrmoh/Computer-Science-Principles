@@ -1,14 +1,18 @@
 #file by Imraan Mohammed
 
 #import all necessary modules and libraries
-
+import pygame as p
 from settings import *
 from sprites import*
+from random import randint
+from tilemap import *
+from os import path
 from random import randint
 
 
 #created a game class to instantiate later
 #the class will contain all the necessary parts to run the game
+
 class Game:
     #the __init__ function initializes the class
     def __init__(self):
@@ -21,8 +25,13 @@ class Game:
         self.clock = p.time.Clock()
         self.running = True
 
+    def load_data(self):
+        self.game_folder=path.dirname(__file__)
+        self.map=Map(path.join(self.game_folder, "level1.txt"))
+
     #creating a new sprite
     def new(self):
+        self.load_data()
         #creating the all_sprites group to put the game's sprites in
         self.all_sprites = p.sprite.Group()
         #creating the player sprite
@@ -42,13 +51,25 @@ class Game:
         self.all_sprites.add(self.wall)
         #adding the right wall to the all_sprites group
         self.all_sprites.add(self.rightwall)
+        '''
         for i in range(6):
             Mob(self, i*randint(0, 200))
             #Mob(self, i*randint(0, 200), i*randint(0, 200))
         for i in range(6):
             Wall( i*TILESIZE, i*TILESIZE)
-            #self.all_sprites.add(w)
+            #self.all_sprites.add(w)g
+        '''
             
+        for row, tiles in enumerate(self.map.data):
+            print(row)
+            for col, tile in enumerate(tiles):
+                print(col)
+                if tile=="1":
+                    Wall(self, col, row)
+                if tile=="P":
+                    self.player = Player(self, col, row)
+                if tile=="M":
+                    Mob(self, col, row)
 
     def run(self):
         while self.running:
