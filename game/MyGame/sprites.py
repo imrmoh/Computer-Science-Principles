@@ -1,10 +1,7 @@
 #File by Imraan Mohammed
-from email.message import _SupportsDecodeToPayload
-from faulthandler import cancel_dump_traceback_later
-from time import sleep
-from tkinter.colorchooser import askcolor
 
-from networkx import single_target_shortest_path
+
+
 from settings import *
 import pygame as p
 from pygame.sprite import Sprite
@@ -39,9 +36,39 @@ class Player(Sprite):
         if keys[p.K_d]:
             self.vx += self.speed
 
+    def collide_with_walls(self, dir):
+       if dir=="x":
+           hits=p.sprite.spritecollide(self, self.game.all_walls,False)
+           if hits:
+                if self.vx>0:
+                   self.x=hits[0].rect.left-self.rect.width
+                if self.vx<0:
+                    self.x=hits[0].rect.right
+                self.vx=0
+                self.rect.x=self.x
+       if dir=="y":
+           hits=p.sprite.spritecollide(self, self.game.all_walls,False)
+           if hits:
+                if self.vy>0:
+                   self.y=hits[0].rect.top-self.rect.height
+                if self.vy<0:
+                    self.y=hits[0].rect.bottom
+                self.vy=0
+                self.rect.y=self.y
+                
+
+
+
     def update(self):
         self.get_keys()
         self.rect.x += self.speed
+        self.x+=self.vx*self.game.dt
+        self.y+=self.vy*self.game.dt
+        self.collide_with_walls("x")
+        self.rect.x=self.x
+        self.collide_with_walls("y")
+        self.rect.y=self.y
+
         if self.rect.right>WIDTH or self.rect.left<0:
             print("off the screen")
             print(self.speed)
@@ -52,6 +79,7 @@ class Player(Sprite):
             self.speed *= 1
         elif self.rect.colliderect(self):
             self.speed *= -1
+        
 
 class Mob(Sprite):
     def __init__(self, x, y):
@@ -77,15 +105,15 @@ class Mob(Sprite):
 
 class Wall(Sprite):
     def __init__(self, x, y):
-        self.groups=game.all_sprites
+        self.groups=(game.all_sprites, game.all_walls)
         self.game=game
         Sprite.__init__(self, self.groups)
         self.image=p.Surface((700, TILESIZE))
         self.rect=self.image.get_rect()
         self.image.fill(WHITE)
-        self.x=x
-        self.y=y
-
+        self.rect.x=x
+        self.rect.y=y
+'''
 class RightWall(Sprite):
     def __init__(self, x, y):
         Sprite.__init__(self)
@@ -94,5 +122,17 @@ class RightWall(Sprite):
         self.image.fill(WHITE)
         self.x=x
         self.y=y
+'''
+
+class PowerUp(Sprite):
+    def __init__(self, x, y):
+        self.groups=(game.all_sprites, game.all_walls)
+        self.game=game
+        Sprite.__init__(self, self.groups)
+        self.image=p.Surface((700, TILESIZE))
+        self.rect=self.image.get_rect()
+        self.image.fill(BLACK)
+        self.rect.x=x
+        self.rect.y=y
 
 

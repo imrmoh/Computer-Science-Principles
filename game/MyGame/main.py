@@ -7,7 +7,8 @@ from sprites import*
 from random import randint
 from tilemap import *
 from os import path
-from random import randint
+
+
 
 
 #created a game class to instantiate later
@@ -27,7 +28,7 @@ class Game:
 
     def load_data(self):
         self.game_folder=path.dirname(__file__)
-        self.map=Map(path.join(self.game_folder, "level1.txt"))
+        self.map=Map(path.join(self.game_folder, "level1.txt")) 
 
     #creating a new sprite
     def new(self):
@@ -51,6 +52,9 @@ class Game:
         self.all_sprites.add(self.wall)
         #adding the right wall to the all_sprites group
         self.all_sprites.add(self.rightwall)
+        self.all_walls=p.sprite.Group()
+        self.all_mobs=p.sprite.Group()
+        self.all_powerups=p.sprite.Group
         '''
         for i in range(6):
             Mob(self, i*randint(0, 200))
@@ -59,17 +63,19 @@ class Game:
             Wall( i*TILESIZE, i*TILESIZE)
             #self.all_sprites.add(w)g
         '''
-            
+        #takes mapdata and parses it using enumerate so that it is possible to assign x and y to object values   
         for row, tiles in enumerate(self.map.data):
             print(row)
             for col, tile in enumerate(tiles):
                 print(col)
                 if tile=="1":
-                    Wall(self, col, row)
+                    Wall(self, col, row) 
                 if tile=="P":
                     self.player = Player(self, col, row)
                 if tile=="M":
                     Mob(self, col, row)
+                if tile == "U":
+                    PowerUp(self, col, row)
 
     def run(self):
         while self.running:
@@ -91,11 +97,21 @@ class Game:
     #the update function updates the sprites
     def update(self):
         #updates all the sprites in the game
-        self.all_sprites.update()
     #the draw function fills the screen, draws the sprites, and displays them
+
+    def draw_text(self, surface, text, size, color, x, y):
+        font_name=p.font.match_font('garamond')
+        font=p.font.Font(font_name, size)
+        text_surface=font.render(text, True, color)
+        text_rect=text_surface.get_rect()
+        text_rect.midtop=(x, y)
+        surface.blit(text_surface, text_rect)
+
     def draw(self):
         #fills the screen with a specific color
         self.screen.fill((0, 87, 65))
+        self.draw_text(self.screen, str(self.dt*1000), 24, BLACK, WIDTH/2, height/2)
+        self.draw_text(self.screen, "Game", 24, BLACK, WIDTH/2, height/2)
         #draws the sprites
         self.all_sprites.draw(self.screen)
         p.display.flip()
