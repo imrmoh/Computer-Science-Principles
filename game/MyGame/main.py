@@ -26,6 +26,7 @@ class Game:
         self.clock = p.time.Clock()
         self.running = True
 
+    #loads the map data from the file with the map
     def load_data(self):
         self.game_folder=path.dirname(__file__)
         self.map=Map(path.join(self.game_folder, "level1.txt")) 
@@ -68,6 +69,7 @@ class Game:
             print(row)
             for col, tile in enumerate(tiles):
                 print(col)
+                #checks what tile type each tile of the map is, and assigns each tile to a specific element of the game accordingly
                 if tile=="1":
                     Wall(self, col, row) 
                 if tile=="P":
@@ -77,10 +79,12 @@ class Game:
                 if tile == "U":
                     PowerUp(self, col, row)
 
+    #the run function runs the other functions
     def run(self):
         while self.running:
             #controlled by clock
             self.dt = self.clock.tick(FPS)/1000
+            #running the event, update, and draw functions
             self.events()
             self.update()
             self.draw()
@@ -99,14 +103,18 @@ class Game:
         #updates all the sprites in the game
     #the draw function fills the screen, draws the sprites, and displays them
 
+        #drawing text on the screen
     def draw_text(self, surface, text, size, color, x, y):
+        #selecting the font and size
         font_name=p.font.match_font('garamond')
         font=p.font.Font(font_name, size)
         text_surface=font.render(text, True, color)
         text_rect=text_surface.get_rect()
         text_rect.midtop=(x, y)
+        #surface.blit allows text to be drawn on the screen
         surface.blit(text_surface, text_rect)
 
+    #draws the sprites
     def draw(self):
         #fills the screen with a specific color
         self.screen.fill((0, 87, 65))
