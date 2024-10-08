@@ -2,6 +2,7 @@
 
 
 #importing all necessary modules and libraries
+from xml.sax.handler import DTDHandler
 from settings import *
 import pygame as p
 from pygame.sprite import Sprite
@@ -69,6 +70,7 @@ class Player(Sprite):
 
 
     #the update function allows for the game to change as the user interacts with it
+    '''
     def update(self):
         self.get_keys()
         self.rect.x += self.speed
@@ -90,6 +92,23 @@ class Player(Sprite):
             self.speed *= 1
         elif self.rect.colliderect(self):
             self.speed *= -1
+        '''
+    def collide_with_stuff(self, group, kill):
+        hits=p.sprite.spritecollide(self, group, kill)
+        if hits:
+            if str(hits[0].__class__.__name__) == "Powerup":
+                print("Powerup Collected!")
+   
+   
+    def update(self):
+        self.get_keys
+        self.x += self.vx * self.game.dt
+        self.y += self.vy * self.game.dt
+        self.collide_with_stuff(self.game.all_powerups, True)
+        self.rect.x = self.x
+        self.collide_with_walls("x")
+        self.rect.y = self.y
+        self.collide_with_walls("y")
         
 #creating a mon
 class Mob(Sprite):

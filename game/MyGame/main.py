@@ -100,6 +100,7 @@ class Game:
 
     #the update function updates the sprites
     def update(self):
+        pass
         #updates all the sprites in the game
     #the draw function fills the screen, draws the sprites, and displays them
 
