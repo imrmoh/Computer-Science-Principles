@@ -29,7 +29,8 @@ class Player(Sprite):
         self.x=x*TILESIZE
         self.y=y*TILESIZE
         self.speed=10
-        self.vx, self.vy = 0, 0 
+        self.vx, self.vy = 0, 0
+        self.coins=0
 
     #the get_keys function allows for the program to detect when certain keys are being pressed
     def get_keys(self):
@@ -98,6 +99,11 @@ class Player(Sprite):
         if hits:
             if str(hits[0].__class__.__name__) == "Powerup":
                 print("Powerup Collected!")
+                self.speed+=5
+            if str(hits[0].__class__.__name__) == "Coin":
+                print("Coin Collected!")
+                self.coins += 1
+
    
    
     def update(self):
@@ -105,6 +111,7 @@ class Player(Sprite):
         self.x += self.vx * self.game.dt
         self.y += self.vy * self.game.dt
         self.collide_with_stuff(self.game.all_powerups, True)
+        self.collide_with_stuff(self.game.all_coins, True)
         self.rect.x = self.x
         self.collide_with_walls("x")
         self.rect.y = self.y
@@ -154,7 +161,7 @@ class Wall(Sprite):
         self.image.fill(WHITE)
         self.rect.x=x
         self.rect.y=y
-'''
+
 class RightWall(Sprite):
     def __init__(self, x, y):
         Sprite.__init__(self)
@@ -163,7 +170,7 @@ class RightWall(Sprite):
         self.image.fill(WHITE)
         self.x=x
         self.y=y
-'''
+
 
 #creating a powerup
 class PowerUp(Sprite):
@@ -181,3 +188,13 @@ class PowerUp(Sprite):
         self.rect.y=y
 
 
+class Coin(Sprite):
+    def __init__(self, game, x, y):
+        self.game = game
+        self.groups = game.all_sprites, game.all_coins
+        Sprite.__init__(self, self.groups)
+        self.image = p.Surface((TILESIZE, TILESIZE))
+        self.rect = self.image.get_rect()
+        self.image.fill(GOLD)
+        self.rect.x = x * TILESIZE
+        self.rect.y = y * TILESIZE

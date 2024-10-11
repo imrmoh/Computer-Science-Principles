@@ -3,16 +3,29 @@
 #import all necessary modules and libraries
 import pygame as p
 from settings import *
-from sprites import*
+from sprites import *
 from random import randint
 from tilemap import *
 from os import path
 
+'''
+Elevator pitch: I want to create a game where the player must navigate certain obstacles and make certain decisions
+to acquire a certain number of coins
+
+Goals: to obtain a certain number of coins
+Rules: Must avoid obstacles by performing advanced manuevers, must make decisions through moving
+Feedback: health meter, spell interaction, doors and gates
+Freedom: Movement, jumping, making decisions, climbing, descending
+
+Sentence: 
+'''
 
 
 
 #created a game class to instantiate later
 #the class will contain all the necessary parts to run the game
+
+    #loads the map data from the file with the map
 
 class Game:
     #the __init__ function initializes the class
@@ -26,7 +39,6 @@ class Game:
         self.clock = p.time.Clock()
         self.running = True
 
-    #loads the map data from the file with the map
     def load_data(self):
         self.game_folder=path.dirname(__file__)
         self.map=Map(path.join(self.game_folder, "level1.txt")) 
@@ -55,7 +67,8 @@ class Game:
         self.all_sprites.add(self.rightwall)
         self.all_walls=p.sprite.Group()
         self.all_mobs=p.sprite.Group()
-        self.all_powerups=p.sprite.Group
+        self.all_powerups=p.sprite.Group()
+        self.all_coins=p.sprite.Group()
         '''
         for i in range(6):
             Mob(self, i*randint(0, 200))
@@ -78,6 +91,8 @@ class Game:
                     Mob(self, col, row)
                 if tile == "U":
                     PowerUp(self, col, row)
+                if tile == "C":
+                    Coin(self, col, row)
 
     #the run function runs the other functions
     def run(self):
@@ -119,8 +134,11 @@ class Game:
     def draw(self):
         #fills the screen with a specific color
         self.screen.fill((0, 87, 65))
-        self.draw_text(self.screen, str(self.dt*1000), 24, BLACK, WIDTH/2, height/2)
-        self.draw_text(self.screen, "Game", 24, BLACK, WIDTH/2, height/2)
+
+        #self.draw_text(self.screen, str(self.dt*1000), 24, BLACK, WIDTH/2, height/2)
+        #self.draw_text(self.screen, "Game", 24, BLACK, WIDTH/2, height/2)
+        self.draw_text(self.screen, str(p.time.get_ticks()), 24, WHITE, WIDTH/30, height/30)
+        self.draw_text(self.screen, "Coins collected:" + str(self.player.coins), 24, BLACK, WIDTH/2, height/24)
         #draws the sprites
         self.all_sprites.draw(self.screen)
         p.display.flip()
