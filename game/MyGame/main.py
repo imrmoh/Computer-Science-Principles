@@ -10,14 +10,18 @@ from os import path
 
 '''
 Elevator pitch: I want to create a game where the player must navigate certain obstacles and make certain decisions
-to acquire a certain number of coins
+to acquire a certain number of coins.
 
 Goals: to obtain a certain number of coins
-Rules: Must avoid obstacles by performing advanced manuevers, must make decisions through moving
+Rules: Must avoid obstacles by performing advanced manuevers, must make decisions through moving or within a story
 Feedback: health meter, spell interaction, doors and gates
 Freedom: Movement, jumping, making decisions, climbing, descending
 
-Sentence: 
+Other Ideas: Crossy road 
+
+
+Sentence: My game is a sidescroller game which includes the player avoiding obstacles and manuevering to collect coins,
+with the option of collecting powerups6
 '''
 
 

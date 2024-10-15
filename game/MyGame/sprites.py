@@ -31,6 +31,7 @@ class Player(Sprite):
         self.speed=10
         self.vx, self.vy = 0, 0
         self.coins=0
+        self.jump_power=25
 
     #the get_keys function allows for the program to detect when certain keys are being pressed
     def get_keys(self):
@@ -44,6 +45,8 @@ class Player(Sprite):
             self.vy += self.speed
         if keys[p.K_d]:
             self.vx += self.speed
+        if keys[p.K_SPACE]:
+            self.jump()
 
     #the collide_with_walls function checks if the player has collided with any walls
     def collide_with_walls(self, dir):
@@ -196,5 +199,16 @@ class Coin(Sprite):
         self.image = p.Surface((TILESIZE, TILESIZE))
         self.rect = self.image.get_rect()
         self.image.fill(GOLD)
+        self.rect.x = x * TILESIZE
+        self.rect.y = y * TILESIZE
+
+class Spike(Sprite):
+    def __init__(self, game, x, y):
+        self.game = game
+        self.groups = game.all_sprites, game.all_coins
+        Sprite.__init__(self, self.groups)
+        self.image = p.Surface((TILESIZE, TILESIZE))
+        self.rect = self.image.get_rect()
+        self.image.fill(BLACK)
         self.rect.x = x * TILESIZE
         self.rect.y = y * TILESIZE
