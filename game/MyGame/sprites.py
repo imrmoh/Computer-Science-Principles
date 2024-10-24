@@ -205,7 +205,7 @@ class Coin(Sprite):
 class Spike(Sprite):
     def __init__(self, game, x, y):
         self.game = game
-        self.groups = game.all_sprites, game.all_coins
+        self.groups = game.all_sprites, game.all_walls
         Sprite.__init__(self, self.groups)
         self.image = p.Surface((TILESIZE, TILESIZE))
         self.rect = self.image.get_rect()

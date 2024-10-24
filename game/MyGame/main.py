@@ -97,6 +97,8 @@ class Game:
                     PowerUp(self, col, row)
                 if tile == "C":
                     Coin(self, col, row)
+                if tile=="S"
+                    Spike(self, col, row)
 
     #the run function runs the other functions
     def run(self):
