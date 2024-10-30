@@ -2,11 +2,12 @@
 
 #import all necessary modules and libraries
 import pygame as p
-from settings import *
+from spritessidescroller import *
 from sprites import *
 from random import randint
 from tilemap import *
 from os import path
+from settings import *
 
 '''
 Elevator pitch: I want to create a game where the player must navigate certain obstacles and make certain decisions
@@ -45,7 +46,7 @@ class Game:
 
     def load_data(self):
         self.game_folder=path.dirname(__file__)
-        self.map=Map(path.join(self.game_folder, "level1.txt")) 
+        self.map=Map(path.join(self.game_folder, "lvl1.txt")) 
 
     #creating a new sprite
     def new(self):
@@ -97,8 +98,9 @@ class Game:
                     PowerUp(self, col, row)
                 if tile == "C":
                     Coin(self, col, row)
-                if tile=="S"
+                if tile=="S":
                     Spike(self, col, row)
+                
 
     #the run function runs the other functions
     def run(self):

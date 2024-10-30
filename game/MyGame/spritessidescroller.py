@@ -2,11 +2,12 @@
 
 
 #importing all necessary modules and libraries
-from ast import Delete
+from xml.sax.handler import DTDHandler
 from settings import *
 import pygame as p
 from pygame.sprite import Sprite
-from main import *
+
+vec=p.math.Vector2
 
 #the Player class allows us to create the player sprite
 class Player(Sprite):
@@ -27,10 +28,13 @@ class Player(Sprite):
         #self.rect.x=x
         #self.rect.y=y
         #setting the size of Player on the screen
-        self.x=x*TILESIZE
-        self.y=y*TILESIZE
-        self.speed=10
-        self.vx, self.vy = 0, 0
+        # self.x=x*TILESIZE
+        # self.y=y*TILESIZE
+        self.pos=vec(x*TILESIZE, y*TILESIZE)
+        self.vel=vec(0, 0)
+        self.acc=vec(0, 0)
+        self.speed
+        # self.vx, self.vy = 0, 0
         self.coins=0
         self.jump_power=25
 
@@ -38,84 +42,105 @@ class Player(Sprite):
     def get_keys(self):
         keys=p.key.get_pressed()
         #adjusts the direction that the player is moving in based on which key the player presses
-        if keys[p.K_w]:
-            self.vy -= self.speed
+        # if keys[p.K_w]:
+        #     self.vel.x -= self.speed
         if keys[p.K_a]:
-            self.vx -=self.speed
-        if keys [p.K_s]:
-            self.vy += self.speed
+            self.vel.x -=self.speed
+        # if keys [p.K_s]:
+        #     self.vy += self.speed
         if keys[p.K_d]:
-            self.vx += self.speed
+            self.vel.x += self.speed
         if keys[p.K_SPACE]:
             self.jump()
+
+    def jump(self):
+        print("I'm trying to júmp")
+        print(self.vel.y)
+        self.rect.y +=2
+        hits=p.sprite.spritecollide(self, self.game.all_walls, False)
+        self.rect.y -= 2
+        if hits and not self.jumping:
+            self.jumping=True
+            self.vel.y = -self.jump_power
+            print("tryíñg to júmp")
 
     #the collide_with_walls function checks if the player has collided with any walls
     def collide_with_walls(self, dir):
         #checks if the player has collided with the left/right wall
        if dir=="x":
-           hits=p.sprite.spritecollide(self, self.game.all_walls,False)
+           hits=p.sprite.spritecollide(self, self.game.all_walls, False)
            if hits:
-                if self.vx>0:
+                if self.vel.x>0:
                    self.x=hits[0].rect.left-self.rect.width
-                if self.vx<0:
+                if self.vel.x<0:
                     self.x=hits[0].rect.right
-                self.vx=0
-                self.rect.x=self.x
+                self.vel.x=0
+                self.rect.x=self.pos.x
        #checks if the player has collided with the top/bottom wall
        if dir=="y":
            hits=p.sprite.spritecollide(self, self.game.all_walls,False)
            if hits:
-                if self.vy>0:
-                   self.y=hits[0].rect.top-self.rect.height
-                if self.vy<0:
-                    self.y=hits[0].rect.bottom
-                self.vy=0
-                self.rect.y=self.y
+                if self.vel.y>0:
+                   self.vel.y=hits[0].rect.top-self.rect.height
+                if self.vel.y<0:
+                    self.vel.y=hits[0].rect.bottom
+                self.vel.y=0
+                self.rect.y=self.pos.y
+                self.jumping=False                      
 
-
-                
-
-
+            
     #the update function allows for the game to change as the user interacts with it
     
-    def update(self):
-        self.get_keys()
-        self.rect.x += self.speed
-        self.x+=self.vx*self.game.dt
-        self.y+=self.vy*self.game.dt
-        self.collide_with_walls("x")
-        self.rect.x=self.x
-        self.collide_with_walls("y")
-        self.rect.y=self.y
-        #detects if the Player is off the screen
-        if self.rect.right>WIDTH or self.rect.left<0:
-            print("off the screen")
-            print(self.speed)
-            print(self.rect.x)
-            self.speed *= -1
-            self.rect.y += 32
-        #adjusts the speed depending on certain circumstances
-        elif self.rect.colliderect(self.game.player):
-            self.speed *= 1
-        elif self.rect.colliderect(self):
-            self.speed *= -1
+   # def update(self):
+
+
+
+    #     self.rect.x += self.speed
+    #     self.x+=self.vx*self.game.dt
+    #     self.y+=self.vy*self.game.dt
+    #     self.collide_with_walls("x")
+    #     self.rect.x=self.x
+    #     self.collide_with_walls("y")
+    #     self.rect.y=self.y
+    #     #detects if the Player is off the screen
+    #     if self.rect.right>WIDTH or self.rect.left<0:
+    #         print("off the screen")
+    #         print(self.speed)
+    #         print(self.rect.x)
+    #         self.speed *= -1
+    #         self.rect.y += 32
+    #     #adjusts the speed depending on certain circumstances
+    #     elif self.rect.colliderect(self.game.player):
+    #         self.speed *= 1
+    #     elif self.rect.colliderect(self):
+    #         self.speed *= -1
         
-    def collide_with_stuff(self, group, kill):
-        hits=p.sprite.spritecollide(self, group, kill)
-        if hits:
-            if str(hits[0].__class__.__name__) == "Powerup":
-                print("Powerup Collected!")
-                self.speed+=5
-            if str(hits[0].__class__.__name__) == "Coin":
-                print("Coin Collected!")
-                self.coins += 1
+    # def collide_with_stuff(self, group, kill):
+    #     hits=p.sprite.spritecollide(self, group, kill)
+    #     if hits:
+    #         if str(hits[0].__class__.__name__) == "Powerup":
+    #             print("Powerup Collected!")
+    #             self.speed+=5
+    #         if str(hits[0].__class__.__name__) == "Coin":
+    #             print("Coin Collected!")
+    #             self.coins += 1
 
    
    
     def update(self):
         self.get_keys
-        self.x += self.vx * self.game.dt
-        self.y += self.vy * self.game.dt
+        self.acc = vec(0, GRAVITY)
+        self.get_keys()
+        self.acc.x += self.vel.x * FRICTION
+        self.vel += self.acc 
+
+        if abs(self.vel.x) < 0.1:
+            self.vel.x = 0
+
+        self.pos += self.vel + 0.5 * self.acc
+
+        # self.x += self.vx * self.game.dt
+        # self.y += self.vy * self.game.dt
         self.collide_with_stuff(self.game.all_powerups, True)
         self.collide_with_stuff(self.game.all_coins, True)
         self.rect.x = self.x
