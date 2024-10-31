@@ -60,6 +60,7 @@ class FRUIT:
         #establising the position of the fruit
         self.pos=Vector2(self.x, self.y)
     #making the furit appear on the screen
+
     def draw_fruit(self):
         #creating a rectangle for the fruit with the right position and size
         fruit_rect=pg.Rect(int(self.pos.x*cell_size), int(self.pos.y*cell_size), cell_size, cell_size)
@@ -67,3 +68,45 @@ class FRUIT:
         pg.draw.rect(screen, (126, 166, 114), fruit_rect)
         #updating the pygame display
         pg.display.flip()
+
+    #the randomize function moves the fruit to a random position
+    def randomize(self):
+        #changing the x and y coordinates of the fruit to a random location
+        self.x=random.randint(0, cell_number -1)
+        self.y=random.randint(0, cell_number -1)
+        #changing the fruit's position
+        self.pos=Vector2(self.x, self.y)
+
+    #the add_block function will make the snake longer
+    def add_block(self):
+        pass
+
+#the main class
+class MAIN:
+    #initializing the main class
+    def __init__(self):
+        #initializing the main class
+        self.snake=SNAKE()
+        self.fruit=FRUIT()
+
+    #update function, ensures that the snake's position can update
+    def update(self):
+        #allows the snake to move
+        self.snake.move_snake()
+
+    #the draw_items function draws the fruit and draws the snake
+    def draw_items(self):
+        #using the draw_fruit and draw_snake functions to create the fruit and snake
+        self.fruit.draw_fruit()
+        self.snake.draw_snake()
+
+    #checks if the snake has collided with the fruit
+    def check_collision(self):
+        #the if statement checks if the fruit and snake's positions are the same
+        if self.fruit.pos == self.snake.body[0]:
+            #moving the fruit to a random position
+            self.fruit.randomize()
+            #adding a block to the end of the snake to make it longer
+            self.snake.add_block
+    MAIN.draw_items()
+

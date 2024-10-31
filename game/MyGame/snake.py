@@ -42,13 +42,13 @@ class Game:
     #running the classes in snakesprites
     def run():
         #creating fruit/snake
-        fruit=FRUIT()
-        snake=SNAKE()
+        pass
 
     def timer():
         #"SCREEN_UPDATE" indicates when there is a "USEREVENT"
         SCREEN_UPDATE=pg.USEREVENT
         pg.time.set_timer(SCREEN_UPDATE, 150)
+        main_game = MAIN()
 
     def events(self):
 
@@ -67,13 +67,13 @@ class Game:
                 if event.type == pg.KEYDOWN:
                     #changing the snake's direction to point in a different direction based on which key the user presses
                     if event.key == pg.K_UP:
-                        snake.direction=Vector2(0, -1)
+                        main_game.snake.direction=Vector2(0, -1)
                     if event.key == pg.K_DOWN:
-                        snake.direction=Vector2(0, 1)
+                        main_game.snake.direction=Vector2(0, 1)
                     if event.key == pg.K_RIGHT:
-                        snake.direction=Vector2(1, 0)
+                        main_game.snake.direction=Vector2(1, 0)
                     if event.key == pg.K_LEFT:
-                        snake.direction=Vector2(-1, 0)
+                        main_game.snake.direction=Vector2(-1, 0)
                     #Vector 2 indicates the direction of the snake
 
 #running the game class
