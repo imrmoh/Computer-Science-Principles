@@ -8,6 +8,13 @@ import random
 from snakesprites import *
 #source: https://www.youtube.com/watch?v=QFvqStqPCRU
 
+'''
+goal: collect as many fruits as possible
+rules: cannot go out of bounds, can only move in specific directions
+feedback: snake gets longer as it eats more fruit. Fruit respawns when snake eats it at different location.
+freedom: player can choose to move in 4 directions
+'''
+
 cell_size = 40
 cell_number = 20
 
