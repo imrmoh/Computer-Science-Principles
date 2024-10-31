@@ -1,48 +1,86 @@
+
+#importing all necessary modules and libraries
 import pygame as pg
 import sys
 from snakesettings import *
 from pygame.math import Vector2
 import random
+from snakesprites import *
+#source: https://www.youtube.com/watch?v=QFvqStqPCRU
 
-class SNAKE:
-    def __init__(self):
-        self.body=[Vector2(5, 10), Vector2(6, 10), Vector2(7, 10)]
-
-    def draw_snake(self):
-        for block in self.body:
-            x_pos=int(block.x*cell_size)
-            y_pos = int(block.y*cell_size)
-            block_rect=pg.Rect(x_pos, y_pos, cell_size, cell_size)
-            pg.draw.rect(screen, (183,191,122), block_rect)
-
-class FRUIT:
-    def __init__(self):
-        self.x= random.randint(0, cell_number -1)
-        self.y=random.randint(0, cell_number -1)
-        self.pos=Vector2(self.x, self.y)
-    def draw_fruit(self):
-        fruit_rect=pg.Rect(int(self.pos.x*cell_size), int(self.pos.y*cell_size), cell_size, cell_size)
-        pg.draw.rect(screen, (126, 166, 114), fruit_rect)
-
-pg.init()
 cell_size = 40
 cell_number = 20
+
+#creating a pygame screen
 screen=pg.display.set_mode((cell_number * cell_size,cell_number * cell_size))
-clock=pg.time.Clock()
 
-fruit=FRUIT()
-snake=SNAKE()
+#creating the main game class (all code here)
+class Game:
+    #initializing the game class
+    def __init__(self):
+        pg.init()
+        #setting up a timer
+        clock=pg.time.Clock()
 
-while True:
-    for event in pg.event.get():
-        if event.type == pg.QUIT:
-            pg.quit()
-            sys.exit()
-    screen.fill((175, 215, 70))
-    fruit.draw_fruit()
-    snake.draw_snake()
-    pg.display.update()
-    clock.tick(60)
+    def update(self):
+            #filling the screen with a specific color
+            screen.fill((175, 215, 70))
+            #drawing the fruit and snake
+            fruit.draw_fruit()
+            snake.draw_snake()
+            pg.display.update()
+            #starting the timer
+            clock.tick(60)
+
+    #running the classes in snakesprites
+    def run():
+        #creating fruit/snake
+        fruit=FRUIT()
+        snake=SNAKE()
+
+    def timer():
+        #"SCREEN_UPDATE" indicates when there is a "USEREVENT"
+        SCREEN_UPDATE=pg.USEREVENT
+        pg.time.set_timer(SCREEN_UPDATE, 150)
+
+    def events(self):
+
+        #main game loop, runs forever ("while True")
+        while True:
+            #all of the game events inside the for loop
+            for event in pg.event.get():
+                #if the user quits the game, quit the game and exist the system
+                if event.type == pg.QUIT:
+                    pg.quit()
+                    sys.exit()
+                #if the user presses a key, start moving the snake
+                if event.type == SCREEN_UPDATE:
+                    snake.move_snake()
+                #if the user presses a key ... 
+                if event.type == pg.KEYDOWN:
+                    #changing the snake's direction to point in a different direction based on which key the user presses
+                    if event.key == pg.K_UP:
+                        snake.direction=Vector2(0, -1)
+                    if event.key == pg.K_DOWN:
+                        snake.direction=Vector2(0, 1)
+                    if event.key == pg.K_RIGHT:
+                        snake.direction=Vector2(1, 0)
+                    if event.key == pg.K_LEFT:
+                        snake.direction=Vector2(-1, 0)
+                    #Vector 2 indicates the direction of the snake
+
+#running the game class
+if __name__=="__main__":
+    #"calling" the Game class
+    gme = Game()
+    #running all the functions inside the game class
+    gme.events()
+    gme.timer()
+    gme.update()
+    #running the game
+    gme.run()
+
+ 
 
 
                  
