@@ -14,6 +14,8 @@ feedback: snake gets longer as it eats more fruit. Fruit respawns when snake eat
 freedom: player can choose to move in 4 directions
 '''
 
+#point left off at: https://youtu.be/QFvqStqPCRU?t=4699
+
 #move code to downloads
 apple = pg.image.load('Downloads/apple.png').convert_alpha()
 #setting the cell number and size vars
@@ -113,6 +115,7 @@ class MAIN:
     #the draw_items function draws the fruit and draws the snake
     def draw_items(self):
         #using the draw_fruit and draw_snake functions to create the fruit and snake
+        self.draw_grass()
         self.fruit.draw_fruit()
         self.snake.draw_snake()
 
@@ -131,12 +134,28 @@ class MAIN:
         #check if snake is outside of screen
         if not 0 <= self.snake.body[0].x < cell_number or not 0 <= self.snake.body[0].y < cell_number:
             self.game_over()
-
+        #checking if the snake colides with itself
         for block in self.snake.body[1:]:
             if block == self.snake.body[0]:
+                #ending the game if the snake collides with itself
                 self.game_over()
         
+    def draw_grass(self):
+        grass_color=(167,209,61)
+        for row in range(cell_number):
+            if row%2 == 0:
+                for col in range(cell_number):
+                    if col%2 == 0:
+                        grass_rect=pg.Rect(col*cell_size, row*cell_size, cell_size, cell_size)
+                        pg.draw.rect(screen, grass_color, grass_rect)
+            else:
+                for col in range(cell_number):
+                    if col%2 != 0:
+                        grass_rect=pg.Rect(col*cell_size, row*cell_size, cell_size, cell_size)
+                        pg.draw.rect(screen, grass_color, grass_rect)
 
+
+#the game over function ends the game
     def game_over(self):
         pg.quit()
         sys.exit()

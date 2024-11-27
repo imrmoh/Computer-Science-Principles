@@ -17,6 +17,7 @@ freedom: player can choose to move in 4 directions
 
 '''
 source: https://www.youtube.com/watch?v=QFvqStqPCRU
+point left off at: https://youtu.be/QFvqStqPCRU?t=4699
 '''
 
 cell_size = 40
@@ -72,15 +73,19 @@ class Game:
                 if event.type == pg.KEYDOWN:
                     #changing the snake's direction to point in a different direction based on which key the user presses
                     if event.key == pg.K_UP:
+                        #the second if statement ensures the snake cannot reverse on itself
                         if main_game.snake.direction.y != 1:
                             main_game.snake.direction=Vector2(0, -1)
                     if event.key == pg.K_DOWN:
+                        #the second if statement ensures the snake cannot reverse on itself
                         if main_game.snake.direction.y != -1:
                             main_game.snake.direction=Vector2(0, 1)
                     if event.key == pg.K_RIGHT:
+                        #the second if statement ensures the snake cannot reverse on itself
                         if main_game.snake.direction.x != -1:
                             main_game.snake.direction=Vector2(1, 0)
                     if event.key == pg.K_LEFT:
+                        #the second if statement ensures the snake cannot reverse on itself
                         if main_game.snake.direction.x != 1:
                             main_game.snake.direction=Vector2(-1, 0)
                     #Vector 2 indicates the direction of the snake
