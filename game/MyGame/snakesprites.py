@@ -139,18 +139,22 @@ class MAIN:
             if block == self.snake.body[0]:
                 #ending the game if the snake collides with itself
                 self.game_over()
-        
+    #makes the grass cells have alternating volors
     def draw_grass(self):
         grass_color=(167,209,61)
+        #specifies what to do if the column number is even
         for row in range(cell_number):
             if row%2 == 0:
                 for col in range(cell_number):
                     if col%2 == 0:
+                        #drawing the grass cell
                         grass_rect=pg.Rect(col*cell_size, row*cell_size, cell_size, cell_size)
                         pg.draw.rect(screen, grass_color, grass_rect)
+            #specifies what to do if the column number is odd
             else:
                 for col in range(cell_number):
                     if col%2 != 0:
+                        #grawing the grass cell
                         grass_rect=pg.Rect(col*cell_size, row*cell_size, cell_size, cell_size)
                         pg.draw.rect(screen, grass_color, grass_rect)
 
