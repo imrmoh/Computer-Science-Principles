@@ -14,6 +14,8 @@ feedback: snake gets longer as it eats more fruit. Fruit respawns when snake eat
 freedom: player can choose to move in 4 directions
 '''
 
+#move code to downloads
+apple = pg.image.load('Downloads/apple.png').convert_alpha()
 #setting the cell number and size vars
 cell_size = 40
 cell_number = 20
@@ -26,9 +28,10 @@ class SNAKE:
     #initializing the snake class
     def __init__(self):
         #creating the snake body as being at specific positions
-        self.body=[Vector2(5, 10), Vector2(6, 10), Vector2(7, 10)]
+        self.body=[Vector2(5, 10), Vector2(4, 10), Vector2(3, 10)]
         #orienting the snake initially
         self.direction=Vector2(1, 0)
+        self.new_block = False
 
     #draw_snake creates the snake sprite on the screen
     def draw_snake(self):
@@ -44,11 +47,22 @@ class SNAKE:
 
     #creating the illusion of the snake moving
     def move_snake(self):
-        body_copy=self.body[:-1]
-        #moving the squares of the snake to a different position
-        body_copy.insert(0, body_copy[0] + self.direction)
-        #making a copy of the body and moving it to the new location
-        self.body=body_copy[:]
+        if self.new_block == True:
+            body_copy=self.body[:-1]
+            #moving the squares of the snake to a different position
+            body_copy.insert(0, body_copy[0] + self.direction)
+            #making a copy of the body and moving it to the new location
+            self.body=body_copy[:]
+            self.new_block = False
+        else:
+            body_copy=self.body[:-1]
+            #moving the squares of the snake to a different position
+            body_copy.insert(0, body_copy[0] + self.direction)
+            #making a copy of the body and moving it to the new location
+            self.body=body_copy[:]
+
+    def add_block(self):
+        self.new_block = True
 
 #the fruit class
 class FRUIT:
@@ -65,7 +79,8 @@ class FRUIT:
         #creating a rectangle for the fruit with the right position and size
         fruit_rect=pg.Rect(int(self.pos.x*cell_size), int(self.pos.y*cell_size), cell_size, cell_size)
         #drawing the fruit rectangle on the screen
-        pg.draw.rect(screen, (126, 166, 114), fruit_rect)
+        screen.blit(apple, fruit_rect)
+        #pg.draw.rect(screen, (126, 166, 114), fruit_rect)
         #updating the pygame display
         pg.display.flip()
 
@@ -93,6 +108,7 @@ class MAIN:
     def update(self):
         #allows the snake to move
         self.snake.move_snake()
+        self.check_fail()
 
     #the draw_items function draws the fruit and draws the snake
     def draw_items(self):
@@ -109,4 +125,24 @@ class MAIN:
             #adding a block to the end of the snake to make it longer
             self.snake.add_block
     MAIN.draw_items()
+
+    def check_fail(self):
+        #check if snake meets conditions to die
+        #check if snake is outside of screen
+        if not 0 <= self.snake.body[0].x < cell_number or not 0 <= self.snake.body[0].y < cell_number:
+            self.game_over()
+
+        for block in self.snake.body[1:]:
+            if block == self.snake.body[0]:
+                self.game_over()
+        
+
+    def game_over(self):
+        pg.quit()
+        sys.exit()
+        
+
+
+
+pg.init()
 
