@@ -90,6 +90,77 @@ class Game:
                             main_game.snake.direction=Vector2(-1, 0)
                     #Vector 2 indicates the direction of the snake
 
+#the main class
+class MAIN:
+    #initializing the main class
+    def __init__(self):
+        #initializing the main class
+        self.snake=SNAKE()
+        self.fruit=FRUIT()
+
+    #update function, ensures that the snake's position can update
+    def update(self):
+        #allows the snake to move
+        self.snake.move_snake()
+        self.check_fail()
+
+    #the draw_items function draws the fruit and draws the snake
+    def draw_items(self):
+        #using the draw_fruit and draw_snake functions to create the fruit and snake
+        self.draw_grass()
+        self.fruit.draw_fruit()
+        self.snake.draw_snake()
+
+    #checks if the snake has collided with the fruit
+    def check_collision(self):
+        #the if statement checks if the fruit and snake's positions are the same
+        if self.fruit.pos == self.snake.body[0]:
+            #moving the fruit to a random position
+            self.fruit.randomize()
+            #adding a block to the end of the snake to make it longer
+            self.snake.add_block
+    MAIN.draw_items()
+
+    def check_fail(self):
+        #check if snake meets conditions to die
+        #check if snake is outside of screen
+        if not 0 <= self.snake.body[0].x < cell_number or not 0 <= self.snake.body[0].y < cell_number:
+            self.game_over()
+        #checking if the snake colides with itself
+        for block in self.snake.body[1:]:
+            if block == self.snake.body[0]:
+                #ending the game if the snake collides with itself
+                self.game_over()
+    #makes the grass cells have alternating volors
+    def draw_grass(self):
+        grass_color=(167,209,61)
+        #specifies what to do if the column number is even
+        for row in range(cell_number):
+            if row%2 == 0:
+                for col in range(cell_number):
+                    if col%2 == 0:
+                        #drawing the grass cell
+                        grass_rect=pg.Rect(col*cell_size, row*cell_size, cell_size, cell_size)
+                        pg.draw.rect(screen, grass_color, grass_rect)
+            #specifies what to do if the column number is odd
+            else:
+                for col in range(cell_number):
+                    if col%2 != 0:
+                        #grawing the grass cell
+                        grass_rect=pg.Rect(col*cell_size, row*cell_size, cell_size, cell_size)
+                        pg.draw.rect(screen, grass_color, grass_rect)
+
+
+#the game over function ends the game
+    def game_over(self):
+        pg.quit()
+        sys.exit()
+        
+
+
+
+pg.init()
+
 #running the game class
 if __name__=="__main__":
     #"calling" the Game class

@@ -17,7 +17,6 @@ freedom: player can choose to move in 4 directions
 #point left off at: https://youtu.be/QFvqStqPCRU?t=4699
 
 #move code to downloads
-apple = pg.image.load('Downloads/apple.png').convert_alpha()
 #setting the cell number and size vars
 cell_size = 40
 cell_number = 20
@@ -67,7 +66,7 @@ class SNAKE:
         self.new_block = True
 
 #the fruit class
-class FRUIT:
+class FRUIT2:
     #initializing the fruit class
     def __init__(self):
         #placing the fruit at a random point by giving it random x and y coordinates
@@ -81,7 +80,7 @@ class FRUIT:
         #creating a rectangle for the fruit with the right position and size
         fruit_rect=pg.Rect(int(self.pos.x*cell_size), int(self.pos.y*cell_size), cell_size, cell_size)
         #drawing the fruit rectangle on the screen
-        screen.blit(apple, fruit_rect)
+        #screen.blit(apple, fruit_rect)
         #pg.draw.rect(screen, (126, 166, 114), fruit_rect)
         #updating the pygame display
         pg.display.flip()
@@ -97,75 +96,5 @@ class FRUIT:
     #the add_block function will make the snake longer
     def add_block(self):
         pass
-
-#the main class
-class MAIN:
-    #initializing the main class
-    def __init__(self):
-        #initializing the main class
-        self.snake=SNAKE()
-        self.fruit=FRUIT()
-
-    #update function, ensures that the snake's position can update
-    def update(self):
-        #allows the snake to move
-        self.snake.move_snake()
-        self.check_fail()
-
-    #the draw_items function draws the fruit and draws the snake
-    def draw_items(self):
-        #using the draw_fruit and draw_snake functions to create the fruit and snake
-        self.draw_grass()
-        self.fruit.draw_fruit()
-        self.snake.draw_snake()
-
-    #checks if the snake has collided with the fruit
-    def check_collision(self):
-        #the if statement checks if the fruit and snake's positions are the same
-        if self.fruit.pos == self.snake.body[0]:
-            #moving the fruit to a random position
-            self.fruit.randomize()
-            #adding a block to the end of the snake to make it longer
-            self.snake.add_block
-    MAIN.draw_items()
-
-    def check_fail(self):
-        #check if snake meets conditions to die
-        #check if snake is outside of screen
-        if not 0 <= self.snake.body[0].x < cell_number or not 0 <= self.snake.body[0].y < cell_number:
-            self.game_over()
-        #checking if the snake colides with itself
-        for block in self.snake.body[1:]:
-            if block == self.snake.body[0]:
-                #ending the game if the snake collides with itself
-                self.game_over()
-    #makes the grass cells have alternating volors
-    def draw_grass(self):
-        grass_color=(167,209,61)
-        #specifies what to do if the column number is even
-        for row in range(cell_number):
-            if row%2 == 0:
-                for col in range(cell_number):
-                    if col%2 == 0:
-                        #drawing the grass cell
-                        grass_rect=pg.Rect(col*cell_size, row*cell_size, cell_size, cell_size)
-                        pg.draw.rect(screen, grass_color, grass_rect)
-            #specifies what to do if the column number is odd
-            else:
-                for col in range(cell_number):
-                    if col%2 != 0:
-                        #grawing the grass cell
-                        grass_rect=pg.Rect(col*cell_size, row*cell_size, cell_size, cell_size)
-                        pg.draw.rect(screen, grass_color, grass_rect)
-
-
-#the game over function ends the game
-    def game_over(self):
-        pg.quit()
-        sys.exit()
-        
-
-
-
-pg.init()
+    
 

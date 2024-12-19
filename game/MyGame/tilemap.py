@@ -1,6 +1,6 @@
 #importing all necessary modules and libraries
 import pygame as p
-from settings import *
+from game.MyGame.settingsoriginal import *
 
 #setting up the tilemap that we drew in the other file
 class Tilemap:

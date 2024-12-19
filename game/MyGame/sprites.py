@@ -1,217 +1,143 @@
-#File by Imraan Mohammed
+#importing necessary modules
+import pygame as pg
+import random
 
+#source: https://www.youtube.com/watch?v=QFvqStqPCRU
 
-#importing all necessary modules and libraries
-from ast import Delete
-from settings import *
-import pygame as p
-from pygame.sprite import Sprite
-from main import *
+'''
+goal: collect as many fruits as possible
+rules: cannot go out of bounds, can only move in specific directions
+feedback: snake gets longer as it eats more fruit. Fruit respawns when snake eats it at different location.
+freedom: player can choose to move in 4 directions
+'''
 
-#the Player class allows us to create the player sprite
-class Player(Sprite):
-    #the __init__ function allows us to initialize the class
-    def __init__(self, game, x, y):
-        self.game=game
-        #assigning the Player sprite to the all_sprites group
-        self.groups=game.all_sprites
-        Sprite.__init__(self, self.groups)
-        self.game=game
-        #assigning the color of the player as red
-        self.image=p.Surface((32, 32))
-        self.rect=self.image.get_rect()
-        self.image.fill(RED)
-        self.x=x
-        self.y=y
-        self.speed=10
-        #self.rect.x=x
-        #self.rect.y=y
-        #setting the size of Player on the screen
-        self.x=x*TILESIZE
-        self.y=y*TILESIZE
-        self.speed=10
-        self.vx, self.vy = 0, 0
-        self.coins=0
-        self.jump_power=25
+#source: ChatGPT: "Could you split the code up into 2 files, 
+#one main file and one file for the game sprites, 
+#Could you split the code up into 2 files, one main file and one file for the game sprites,
+# but split the code up so that the game still works"
 
-    #the get_keys function allows for the program to detect when certain keys are being pressed
-    def get_keys(self):
-        keys=p.key.get_pressed()
-        #adjusts the direction that the player is moving in based on which key the player presses
-        if keys[p.K_w]:
-            self.vy -= self.speed
-        if keys[p.K_a]:
-            self.vx -=self.speed
-        if keys [p.K_s]:
-            self.vy += self.speed
-        if keys[p.K_d]:
-            self.vx += self.speed
-        if keys[p.K_SPACE]:
-            self.jump()
+#constants
+cell_size = 40
+cell_number = 20
 
-    #the collide_with_walls function checks if the player has collided with any walls
-    def collide_with_walls(self, dir):
-        #checks if the player has collided with the left/right wall
-       if dir=="x":
-           hits=p.sprite.spritecollide(self, self.game.all_walls,False)
-           if hits:
-                if self.vx>0:
-                   self.x=hits[0].rect.left-self.rect.width
-                if self.vx<0:
-                    self.x=hits[0].rect.right
-                self.vx=0
-                self.rect.x=self.x
-       #checks if the player has collided with the top/bottom wall
-       if dir=="y":
-           hits=p.sprite.spritecollide(self, self.game.all_walls,False)
-           if hits:
-                if self.vy>0:
-                   self.y=hits[0].rect.top-self.rect.height
-                if self.vy<0:
-                    self.y=hits[0].rect.bottom
-                self.vy=0
-                self.rect.y=self.y
+#the main class with the main game functions
+class Main:
+    #the init function initializes the class 
+    def __init__(self):
+        
+        self.snake = Snake()
+        self.fruit = Fruit()
 
-
-                
-
-
-    #the update function allows for the game to change as the user interacts with it
+    #the draw_items function creates the different elements on the screen
+    def draw_items(self):
+       
+       #drawing the grass, fruit, and snake on the screen
+        self.draw_grass()
+        self.fruit.draw_fruit()
+        self.snake.draw_snake()
     
-    def update(self):
-        self.get_keys()
-        self.rect.x += self.speed
-        self.x+=self.vx*self.game.dt
-        self.y+=self.vy*self.game.dt
-        self.collide_with_walls("x")
-        self.rect.x=self.x
-        self.collide_with_walls("y")
-        self.rect.y=self.y
-        #detects if the Player is off the screen
-        if self.rect.right>WIDTH or self.rect.left<0:
-            print("off the screen")
-            print(self.speed)
-            print(self.rect.x)
-            self.speed *= -1
-            self.rect.y += 32
-        #adjusts the speed depending on certain circumstances
-        elif self.rect.colliderect(self.game.player):
-            self.speed *= 1
-        elif self.rect.colliderect(self):
-            self.speed *= -1
+    #the check_collision function checks if the snake colides with a fruit
+
+    def check_collision(self):
+
+        #if the snake touches a fruit
+        if self.fruit.pos == self.snake.body[0]:
+            #spawn the fruit at another location
+            self.fruit.randomize()
+            #make the snake longer (add a block to the snake's length)
+            self.snake.add_block()
+
+    #the check_fail function checks if the snake is touching itself
+    def check_fail(self):
         
-    def collide_with_stuff(self, group, kill):
-        hits=p.sprite.spritecollide(self, group, kill)
-        if hits:
-            if str(hits[0].__class__.__name__) == "Powerup":
-                print("Powerup Collected!")
-                self.speed+=5
-            if str(hits[0].__class__.__name__) == "Coin":
-                print("Coin Collected!")
-                self.coins += 1
+        #using if statements to determine if the snake is touching itself, and then ending the game if it is
+        if not 0 <= self.snake.body[0].x < cell_number or not 0 <= self.snake.body[0].y < cell_number:
+            self.game_over()
+        for block in self.snake.body[1:]:
+            if block == self.snake.body[0]:
+                self.game_over()
 
+    #the draw_grass function creates the grass in a specific pattern on the screen
+    def draw_grass(self):
+
+        #setting grass color
+        grass_color = (167, 209, 61)
+        #creating an alternating pattern of checkered squares using rows and columns
+        for row in range(cell_number):
+            for col in range(cell_number):
+                if (row + col) % 2 == 0:
+                    #drawing the grass squares
+                    grass_rect = pg.Rect(col * cell_size, row * cell_size, cell_size, cell_size)
+                    pg.draw.rect(pg.display.get_surface(), grass_color, grass_rect)
+
+    #the game_over functions specifies what to do if the snake dies
+    def game_over(self):
+ 
+        #quiting the game and exiting
+        pg.quit()
+        exit()
+
+#the snake class includes all the functions related to the snake
+class Snake:
+    #the __init__ function initializes the class and starts creating the snake body
+    def __init__(self):
+        self.body = [pg.Vector2(5, 10), pg.Vector2(4, 10), pg.Vector2(3, 10)] 
+        self.direction = pg.Vector2(1, 0)  
+        self.new_block=False
+
+    #the draw_snake function completely draws the snake
+    def draw_snake(self):
+ 
+        #creating a generic block that can be used multiple times to form the snake's 
+        # body and can be used to lengthen the snake
+        for block in self.body:
+            x_pos = int(block.x * cell_size)
+            y_pos = int(block.y * cell_size)
+            block_rect = pg.Rect(x_pos, y_pos, cell_size, cell_size)
+            #using the pg.draw.rect function to draw the snake body
+            pg.draw.rect(pg.display.get_surface(), (183, 191, 122), block_rect) 
+
+    #the move_snake function shifts the snake's body to give the appearance of movement
+    def move_snake(self):
+
+        #if a new block is beng added to the snake's body
+        if self.new_block:
+            #adding a new block to the snake
+            body_copy = self.body[:-1]
+            body_copy.insert(0, body_copy[0] + self.direction)
+            self.body = body_copy[:]
+            self.new_block = False
+        else:
+            #moving the snake in the appropriate direction
+            body_copy = self.body[:-1]
+            body_copy.insert(0, body_copy[0] + self.direction)
+            self.body = body_copy[:]
+
+    #the add_block function allows the snake to grow
+    def add_block(self):
+
+        #changes the boolean value to True
+        self.new_block = True
+
+#the Fruit class includes everything related to the fruit
+class Fruit:
+    #the __init__ function initializes the class
+    def __init__(self):
    
-   
-    def update(self):
-        self.get_keys
-        self.x += self.vx * self.game.dt
-        self.y += self.vy * self.game.dt
-        self.collide_with_stuff(self.game.all_powerups, True)
-        self.collide_with_stuff(self.game.all_coins, True)
-        self.rect.x = self.x
-        self.collide_with_walls("x")
-        self.rect.y = self.y
-        self.collide_with_walls("y")
-        
-#creating a mon
-class Mob(Sprite):
-    #intializing the Mob class
-    def __init__(self, x, y):
-        Sprite.__init__(self, self.groups)
-        #setting the size of the Mob
-        self.image=p.Surface((32, 32))
-        self.rect=self.image.get_rect()
-        #setting the color of the Mob
-        self.image.fill(RED)
-        #adjusting other settings related to the mob
-        self.x=x
-        self.y=y
-        self.speed=10
-        self.rect.x=x
-        self.rect.y=y
-    #the update function allows the game to change continuously
-    def update(self):
-        self.rect.x += self.speed
-        #detects if the side of the screen has been hit
-        if self.rect.right >= WIDTH or self.rect.left < 0:
-            #does certain actions of the side of the screen has been hit
-            print("Hit the side of the screen")
-            print(self.speed)
-            print(self.rect.x)
-            self.speed *= -1
-            self.rect.y += 32
-        if self.y <= -600:
-            self.rect.y += 600
+        #placing the fruit in a random position
+        self.randomize()
 
-#creating a wall
-class Wall(Sprite):
-    #initializing the wall class
-    def __init__(self, x, y):
-        self.groups=(game.all_sprites, game.all_walls)
-        self.game=game
-        #setting the size of the wall
-        Sprite.__init__(self, self.groups)
-        self.image=p.Surface((700, TILESIZE))
-        self.rect=self.image.get_rect()
-        #setting the color of the wall
-        self.image.fill(WHITE)
-        self.rect.x=x
-        self.rect.y=y
+    #the draw fruit funciton creates the fruit on the screen
+    def draw_fruit(self):
+    
+        #using pygame functions to draw the fruit
+        fruit_rect = pg.Rect(int(self.pos.x * cell_size), int(self.pos.y * cell_size), cell_size, cell_size)
+        pg.draw.rect(pg.display.get_surface(), (126, 166, 114), fruit_rect)
 
-class RightWall(Sprite):
-    def __init__(self, x, y):
-        Sprite.__init__(self)
-        self.image=p.Surface((700, TILESIZE))
-        self.rect=self.image.get_rect()
-        self.image.fill(WHITE)
-        self.x=x
-        self.y=y
-
-
-#creating a powerup
-class PowerUp(Sprite):
-    #initializing the powerup class
-    def __init__(self, x, y):
-        self.groups=(game.all_sprites, game.all_walls)
-        self.game=game
-        Sprite.__init__(self, self.groups)
-        #setting the size fo the powerup
-        self.image=p.Surface((700, TILESIZE))
-        self.rect=self.image.get_rect()
-        #setting the color of the powerup
-        self.image.fill(BLACK)
-        self.rect.x=x
-        self.rect.y=y
-
-
-class Coin(Sprite):
-    def __init__(self, game, x, y):
-        self.game = game
-        self.groups = game.all_sprites, game.all_coins
-        Sprite.__init__(self, self.groups)
-        self.image = p.Surface((TILESIZE, TILESIZE))
-        self.rect = self.image.get_rect()
-        self.image.fill(GOLD)
-        self.rect.x = x * TILESIZE
-        self.rect.y = y * TILESIZE
-
-class Spike(Sprite):
-    def __init__(self, game, x, y):
-        self.game = game
-        self.groups = game.all_sprites, game.all_walls
-        Sprite.__init__(self, self.groups)
-        self.image = p.Surface((TILESIZE, TILESIZE))
-        self.rect = self.image.get_rect()
-        self.image.fill(BLACK)
-        self.rect.x = x * TILESIZE
-        self.rect.y = y * TILESIZE
+    #the randomize function sends the fruit to a random position
+    def randomize(self):
+    
+        #sending the fruit to random coordinates
+        self.x = random.randint(0, cell_number - 1)
+        self.y = random.randint(0, cell_number - 1)
+        self.pos = pg.Vector2(self.x, self.y)

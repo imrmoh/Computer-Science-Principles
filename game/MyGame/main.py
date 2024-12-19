@@ -1,163 +1,108 @@
-#file by Imraan Mohammed
 
-#import all necessary modules and libraries
-import pygame as p
-from spritessidescroller import *
-from sprites import *
-from random import randint
-from tilemap import *
-from os import path
+#importing the necessary modules
+import pygame as pg
+import sys
+#importing the main class from sprites and importing settings
+from sprites import Main 
 from settings import *
 
+#source: https://www.youtube.com/watch?v=QFvqStqPCRU
+
 '''
-Elevator pitch: I want to create a game where the player must navigate certain obstacles and make certain decisions
-to acquire a certain number of coins.
-
-Goals: to obtain a certain number of coins
-Rules: Must avoid obstacles by performing advanced manuevers, must make decisions through moving or within a story
-Feedback: health meter, spell interaction, doors and gates
-Freedom: Movement, jumping, making decisions, climbing, descending
-
-Other Ideas: Crossy road 
-
-
-Sentence: My game is a sidescroller game which includes the player avoiding obstacles and manuevering to collect coins,
-with the option of collecting powerups6
+goal: collect as many fruits as possible
+rules: cannot go out of bounds, can only move in specific directions
+feedback: snake gets longer as it eats more fruit. Fruit respawns when snake eats it at different location.
+freedom: player can choose to move in 4 directions
 '''
 
+#source: ChatGPT: "Could you split the code up into 2 files, 
+#one main file and one file for the game sprites, 
+#Could you split the code up into 2 files, one main file and one file for the game sprites,
+# but split the code up so that the game still works"
 
+#creating the pygame screen
+screen = pg.display.set_mode((cell_number * cell_size, cell_number * cell_size))
 
-#created a game class to instantiate later
-#the class will contain all the necessary parts to run the game
-
-    #loads the map data from the file with the map
-
+#creating the game class with all the main functions
 class Game:
-    #the __init__ function initializes the class
+    #initializing the game class with the __init__ function
     def __init__(self):
-        p.init()
-        p.mixer.init()
-        self.screen = p.display.set_mode((WIDTH, height))
-        #setting the game's title/caption
-        p.display.set_caption("Test Game")
-        #creates self.clock
-        self.clock = p.time.Clock()
-        self.running = True
+        pg.init()
+        #starting the clock
+        self.clock = pg.time.Clock()
+        self.main_game = Main()  
+        self.screen = pg.display.set_mode((800, 800))
+        #doing the tasks necessary to set up/initialize the game
 
-    def load_data(self):
-        self.game_folder=path.dirname(__file__)
-        self.map=Map(path.join(self.game_folder, "lvl1.txt")) 
-
-    #creating a new sprite
-    def new(self):
-        self.load_data()
-        #creating the all_sprites group to put the game's sprites in
-        self.all_sprites = p.sprite.Group()
-        #creating the player sprite
-        self.player=Player(self, 50, 50)
-        #creating the mob sprite
-        self.mob=Mob(self, 100)
-        #self.mob=Mob(self, 100)
-        #creating a wall
-        self.wall=Wall(0, 100)
-        #creating a second wall
-        self.rightwall=RightWall(100, 100)
-        #adding self.player to the all_sprites group
-        self.all_sprites.add(self.player)
-        #adding the mob to the all_sprites group
-        self.all_sprites.add(self.mob)
-        #adding the wall to the all_sprites group
-        self.all_sprites.add(self.wall)
-        #adding the right wall to the all_sprites group
-        self.all_sprites.add(self.rightwall)
-        self.all_walls=p.sprite.Group()
-        self.all_mobs=p.sprite.Group()
-        self.all_powerups=p.sprite.Group()
-        self.all_coins=p.sprite.Group()
-        '''
-        for i in range(6):
-            Mob(self, i*randint(0, 200))
-            #Mob(self, i*randint(0, 200), i*randint(0, 200))
-        for i in range(6):
-            Wall( i*TILESIZE, i*TILESIZE)
-            #self.all_sprites.add(w)g
-        '''
-        #takes mapdata and parses it using enumerate so that it is possible to assign x and y to object values   
-        for row, tiles in enumerate(self.map.data):
-            print(row)
-            for col, tile in enumerate(tiles):
-                print(col)
-                #checks what tile type each tile of the map is, and assigns each tile to a specific element of the game accordingly
-                if tile=="1":
-                    Wall(self, col, row) 
-                if tile=="P":
-                    self.player = Player(self, col, row)
-                if tile=="M":
-                    Mob(self, col, row)
-                if tile == "U":
-                    PowerUp(self, col, row)
-                if tile == "C":
-                    Coin(self, col, row)
-                if tile=="S":
-                    Spike(self, col, row)
-                
-
-    #the run function runs the other functions
-    def run(self):
-        while self.running:
-            #controlled by clock
-            self.dt = self.clock.tick(FPS)/1000
-            #running the event, update, and draw functions
-            self.events()
-            self.update()
-            self.draw()
-    
-    #the events function checks for one event, which is the user quitting the game
-    def events(self):
-    #checks if the user has quit the game
-        for event in p.event.get():
-            if event.type == p.QUIT:
-                #the game stops running if the user has quit the game
-                self.running = False
-        #p.quit()
-
-    #the update function updates the sprites
+    #the update function allows the game to always update itself so that the game screen is always changing
     def update(self):
-        pass
-        #updates all the sprites in the game
-    #the draw function fills the screen, draws the sprites, and displays them
+        #updating the game screen by redrawing items
+        screen.fill((175, 215, 70)) 
+        self.main_game.draw_items()  
+        pg.display.update()
 
-        #drawing text on the screen
-    def draw_text(self, surface, text, size, color, x, y):
-        #selecting the font and size
-        font_name=p.font.match_font('garamond')
-        font=p.font.Font(font_name, size)
-        text_surface=font.render(text, True, color)
-        text_rect=text_surface.get_rect()
-        text_rect.midtop=(x, y)
-        #surface.blit allows text to be drawn on the screen
-        surface.blit(text_surface, text_rect)
+    #the run function runs the game loop
+    def run(self):
+        #while True indicates the loop is always running
+        while True:
+            #always running the game events
+            self.events()
+            #always running the game
+            self.update()
+            #always running the clock
+            self.clock.tick(60)  
 
-    #draws the sprites
-    def draw(self):
-        #fills the screen with a specific color
-        self.screen.fill((0, 87, 65))
+    #the events function checks for key events, like key presses or the user quitting the game
+    def events(self):
+        #checking for events
+        for event in pg.event.get():
+            #checking if the user quits the game
+            if event.type == pg.QUIT:
+                #exiting and quiting the game if the player quits
+                pg.quit()
+                sys.exit()
+            #checking if the player is pressing the key
+            if event.type == pg.KEYDOWN:
+                #checking if the player presses the up arrow
+                if event.key == pg.K_UP:
+                    #checking to make sure the snake isn't pointing in a specific direction
+                    if self.main_game.snake.direction.y != 1:
+                        #poining the snake upward
+                        self.main_game.snake.direction = pg.Vector2(0, -1)
+                #checking if the player presses the down arrow
+                if event.key == pg.K_DOWN:
+                    #checking to make sure the snake isn't pointing in a specific direction
+                    if self.main_game.snake.direction.y != -1:
+                        #pointing the snake downward
+                        self.main_game.snake.direction = pg.Vector2(0, 1)
+                #checking if the player presses the right arrow
+                if event.key == pg.K_RIGHT:
+                    #checking to make sure the snake isn't pointing in a specific direction
+                    if self.main_game.snake.direction.x != -1:
+                        #pointing the snake to the right
+                        self.main_game.snake.direction = pg.Vector2(1, 0)
+                #checking if the player presses the left arrow
+                if event.key == pg.K_LEFT:
+                    #checking to make sure the snake isn't pointing in a specific direction
+                    if self.main_game.snake.direction.x != 1:
+                        #pointing the snake to the left
+                        self.main_game.snake.direction = pg.Vector2(-1, 0)
 
-        #self.draw_text(self.screen, str(self.dt*1000), 24, BLACK, WIDTH/2, height/2)
-        #self.draw_text(self.screen, "Game", 24, BLACK, WIDTH/2, height/2)
-        self.draw_text(self.screen, str(p.time.get_ticks()), 24, WHITE, WIDTH/30, height/30)
-        self.draw_text(self.screen, "Coins collected:" + str(self.player.coins), 24, BLACK, WIDTH/2, height/24)
-        #draws the sprites
-        self.all_sprites.draw(self.screen)
-        p.display.flip()
+            #checking if the user interacts with a game
+            if event.type == pg.USEREVENT:
+                #moving the snake
+                self.main_game.snake.move_snake()  
+                #checking if the snake collides with a fruit
+                self.main_game.check_collision()
+                #checking if the snake collides with itself
+                self.main_game.check_fail()
 
-    
 
+pg.init()
+pg.time.set_timer(pg.USEREVENT, 150) 
 
-#checking if the file name is main
-if __name__=="__main__":
-    #"calling" the Game class
-    gme = Game()
-    gme.new()
-    #running the game
-    gme.run()
+#checking the file name
+if __name__ == "__main__":
+    #running the game loop
+    game = Game()
+    game.run()
